@@ -1,3 +1,5 @@
 github.com/robustirc/bridge v1.7.3 h1:rNeZw+W/SSyU8jF7FYbCqg2M4fGPQj/3HaePcEBws9k=
 github.com/robustirc/bridge v1.7.3/go.mod h1:/BC0GGix13AzZKm99Hb80m3OEp4Q3GS6hkwSAN16VBw=
 github.com/sorcix/irc v1.1.4-0.20170501124343-8becc86e7db2/go.mod h1:MhzbySH63tDknqfvAAFK3ps/942g4z9EeJ/4lGgHyZc=
+gopkg.in/sorcix/irc.v2 v2.0.0-20190306112350-8d7a73540b90 h1:ItuFAq9SlPhZvdIvsdgoE38i9aLLdDpBbFV9vTJhlp8=
+gopkg.in/sorcix/irc.v2 v2.0.0-20190306112350-8d7a73540b90/go.mod h1:PmJkUcwbuPi1FiZ9Rarr6wzVMvzkO7uWqH1jwrMkgW0=
