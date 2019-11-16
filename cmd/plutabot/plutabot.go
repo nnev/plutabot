@@ -1,13 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
+	"time"
 
 	"github.com/robustirc/bridge/robustsession"
 	"gopkg.in/sorcix/irc.v2"
@@ -16,7 +18,9 @@ import (
 func logic(fifo string) error {
 	if fifo != "" {
 		if err := syscall.Mkfifo(fifo, 0664); err != nil {
-			return err
+			if !os.IsExist(err) {
+				return err
+			}
 		}
 	}
 
@@ -49,17 +53,25 @@ func logic(fifo string) error {
 
 	if fifo != "" {
 		go func() {
-			f, err := os.Open(fifo)
-			if err != nil {
-				log.Fatal(err) // TODO
-			}
-			defer f.Close()
-			scanner := bufio.NewScanner(f)
-			for scanner.Scan() {
-				cmd(irc.PRIVMSG, "#chaos-hd", scanner.Text())
+			for {
+				b, err := ioutil.ReadFile(fifo)
+				if err != nil {
+					log.Fatal(err)
+				}
+				text := strings.TrimSpace(string(b))
+				if text == "" {
+					continue
+				}
+				cmd(irc.PRIVMSG, "#chaos-hd", text)
 			}
 		}()
 	}
+
+	go func() {
+		for range time.Tick(1 * time.Minute) {
+			cmd(irc.PING, "plutabot")
+		}
+	}()
 
 	const desiredNick = "pluta"
 
