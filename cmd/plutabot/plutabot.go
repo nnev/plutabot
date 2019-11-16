@@ -94,8 +94,10 @@ func logic(fifo string) error {
 
 		case irc.NICK:
 		case irc.QUIT:
-			nick = desiredNick
-			cmd(irc.NICK, desiredNick) // best effort
+			if nick != desiredNick {
+				nick = desiredNick
+				cmd(irc.NICK, desiredNick) // best effort
+			}
 		}
 	}
 	return nil
