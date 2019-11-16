@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +13,13 @@ import (
 	"gopkg.in/sorcix/irc.v2"
 )
 
-func logic() error {
+func logic(fifo string) error {
+	if fifo != "" {
+		if err := syscall.Mkfifo(fifo, 0664); err != nil {
+			return err
+		}
+	}
+
 	session, err := robustsession.Create("robustirc.net", "")
 	if err != nil {
 		return err
@@ -37,6 +45,20 @@ func logic() error {
 			Command: command,
 			Params:  params,
 		})
+	}
+
+	if fifo != "" {
+		go func() {
+			f, err := os.Open(fifo)
+			if err != nil {
+				log.Fatal(err) // TODO
+			}
+			defer f.Close()
+			scanner := bufio.NewScanner(f)
+			for scanner.Scan() {
+				cmd(irc.PRIVMSG, "#chaos-hd", scanner.Text())
+			}
+		}()
 	}
 
 	const desiredNick = "pluta"
@@ -68,7 +90,9 @@ func logic() error {
 }
 
 func main() {
-	if err := logic(); err != nil {
+	fifo := flag.String("fifo", "", "path to message FIFO")
+	flag.Parse()
+	if err := logic(*fifo); err != nil {
 		log.Fatal(err)
 	}
 }
