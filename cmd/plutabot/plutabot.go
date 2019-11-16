@@ -60,6 +60,7 @@ func logic() error {
 
 		case irc.NICK:
 		case irc.QUIT:
+			nick = desiredNick
 			cmd(irc.NICK, desiredNick) // best effort
 		}
 	}
