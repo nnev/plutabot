@@ -62,7 +62,9 @@ func logic(fifo string) error {
 				if text == "" {
 					continue
 				}
-				cmd(irc.PRIVMSG, "#chaos-hd", text)
+				for _, line := range strings.Split(text, "\n") {
+					cmd(irc.PRIVMSG, "#chaos-hd", line)
+				}
 			}
 		}()
 	}
